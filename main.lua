@@ -120,10 +120,6 @@ repeat task.wait() until unlocked
 -- 🔓 KEY SYSTEM (END)
 -- =========================
 
--- ⬇️⬇️⬇️
--- AQUÍ ARRANCA TU SCRIPT ORIGINAL
--- (NO TOCADO)
--- ⬇️⬇️⬇️
 -- LocalScript placed in StarterGui or similar
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
