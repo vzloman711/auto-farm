@@ -1,124 +1,160 @@
--- =========================
--- 🔐 KEY SYSTEM (START)
--- =========================
+-- 🔐 SISTEMA DE KEY vzloman
 
 local Players = game:GetService("Players")
-local player = Players.LocalPlayer
-local UserId = tostring(player.UserId)
 local HttpService = game:GetService("HttpService")
+local player = Players.LocalPlayer
 
-local KEYS_URL = "https://raw.githubusercontent.com/vzloman711/auto-farm/refs/heads/main/keys.txt"
+-- 🔗 URL RAW DE TUS KEYS
+local KEYS_URL = "https://raw.githubusercontent.com/vzloman711/auto-farm/main/keys.txt"
 
-local function isKeyValid(inputKey)
-    local success, response = pcall(function()
-        return game:HttpGet(KEYS_URL)
-    end)
-    if not success then return false end
+-- ScreenGui
+local gui = Instance.new("ScreenGui")
+gui.Name = "KeySystemVzloman"
+gui.ResetOnSpawn = false
+gui.Parent = player:WaitForChild("PlayerGui")
 
-    for line in response:gmatch("[^\r\n]+") do
-        local key, uid = line:match("^(.-)|(.+)$")
-        if key and uid then
-            if key == inputKey and uid == UserId then
-                return true
-            end
-        end
-    end
-    return false
-end
+-- Main Frame
+local main = Instance.new("Frame")
+main.Size = UDim2.new(0, 460, 0, 230)
+main.Position = UDim2.new(0.5, -230, 0.5, -115)
+main.BackgroundColor3 = Color3.fromRGB(15,15,15)
+main.BorderSizePixel = 0
+main.Parent = gui
+Instance.new("UICorner", main).CornerRadius = UDim.new(0,18)
 
--- GUI
-local ScreenGui = Instance.new("ScreenGui", player.PlayerGui)
-ScreenGui.ResetOnSpawn = false
-ScreenGui.DisplayOrder = 10000
+-- Top Bar
+local bar = Instance.new("Frame")
+bar.Size = UDim2.new(1,0,0,40)
+bar.BackgroundColor3 = Color3.fromRGB(210,0,0)
+bar.BorderSizePixel = 0
+bar.Parent = main
+Instance.new("UICorner", bar).CornerRadius = UDim.new(0,18)
 
-local Main = Instance.new("Frame", ScreenGui)
-Main.Size = UDim2.new(0, 420, 0, 220)
-Main.Position = UDim2.new(0.5, -210, 0.5, -110)
-Main.BackgroundColor3 = Color3.fromRGB(0,0,0)
-Instance.new("UICorner", Main).CornerRadius = UDim.new(0,15)
+-- Bar Title
+local barTitle = Instance.new("TextLabel")
+barTitle.Size = UDim2.new(1,-50,1,0)
+barTitle.Position = UDim2.new(0,12,0,0)
+barTitle.BackgroundTransparency = 1
+barTitle.Text = "Sistema de Key vzloman"
+barTitle.Font = Enum.Font.GothamBold
+barTitle.TextSize = 14
+barTitle.TextColor3 = Color3.new(1,1,1)
+barTitle.TextXAlignment = Left
+barTitle.Parent = bar
 
-local Bar = Instance.new("Frame", Main)
-Bar.Size = UDim2.new(1,0,0,35)
-Bar.BackgroundColor3 = Color3.fromRGB(255,0,0)
-Instance.new("UICorner", Bar).CornerRadius = UDim.new(0,15)
+-- Close Button
+local close = Instance.new("TextButton")
+close.Size = UDim2.new(0,30,0,30)
+close.Position = UDim2.new(1,-36,0,5)
+close.Text = "✖"
+close.Font = Enum.Font.GothamBold
+close.TextSize = 16
+close.TextColor3 = Color3.new(1,1,1)
+close.BackgroundTransparency = 1
+close.Parent = bar
 
-local Title = Instance.new("TextLabel", Bar)
-Title.Size = UDim2.new(1,0,1,0)
-Title.BackgroundTransparency = 1
-Title.Text = "Auto Farm Anti RK ⚠️BETA⚠️"
-Title.TextColor3 = Color3.new(1,1,1)
-Title.Font = Enum.Font.SourceSansBold
-Title.TextSize = 18
-
-local Input = Instance.new("TextBox", Main)
-Input.PlaceholderText = "Ingresá tu key"
-Input.Size = UDim2.new(0.6,0,0,40)
-Input.Position = UDim2.new(0.05,0,0.45,0)
-Input.BackgroundColor3 = Color3.fromRGB(80,80,80)
-Input.TextColor3 = Color3.new(1,1,1)
-Input.Font = Enum.Font.SourceSansBold
-Input.TextSize = 18
-Instance.new("UICorner", Input).CornerRadius = UDim.new(0,10)
-
-local Button = Instance.new("TextButton", Main)
-Button.Text = "Check Key"
-Button.Size = UDim2.new(0.6,0,0,40)
-Button.Position = UDim2.new(0.05,0,0.7,0)
-Button.BackgroundColor3 = Color3.fromRGB(255,0,0)
-Button.TextColor3 = Color3.new(1,1,1)
-Button.Font = Enum.Font.SourceSansBold
-Button.TextSize = 20
-Instance.new("UICorner", Button).CornerRadius = UDim.new(0,10)
-
-local Msg = Instance.new("TextLabel", Main)
-Msg.Size = UDim2.new(0.6,0,0,25)
-Msg.Position = UDim2.new(0.05,0,0.85,0)
-Msg.BackgroundTransparency = 1
-Msg.TextColor3 = Color3.new(1,1,1)
-Msg.Font = Enum.Font.SourceSansBold
-Msg.TextSize = 16
-
-local Contact = Instance.new("Frame", Main)
-Contact.Size = UDim2.new(0.3,0,0.5,0)
-Contact.Position = UDim2.new(0.68,0,0.35,0)
-Contact.BackgroundTransparency = 1
-
-local C1 = Instance.new("TextLabel", Contact)
-C1.Size = UDim2.new(1,0,0.5,0)
-C1.BackgroundTransparency = 1
-C1.Text = "si tenes algún error\ncontactame por tiktok!"
-C1.TextWrapped = true
-C1.TextColor3 = Color3.new(1,1,1)
-C1.Font = Enum.Font.SourceSansBold
-C1.TextSize = 14
-
-local C2 = Instance.new("TextLabel", Contact)
-C2.Position = UDim2.new(0,0,0.55,0)
-C2.Size = UDim2.new(1,0,0.4,0)
-C2.BackgroundTransparency = 1
-C2.Text = "vz_loman._"
-C2.TextColor3 = Color3.fromRGB(255,0,0)
-C2.Font = Enum.Font.SourceSansBold
-C2.TextSize = 18
-
-local unlocked = false
-
-Button.MouseButton1Click:Connect(function()
-    if isKeyValid(Input.Text) then
-        Msg.Text = "Correcta, iniciando  script... ✅️"
-        unlocked = true
-        task.wait(1)
-        ScreenGui:Destroy()
-    else
-        Msg.Text = "Contraseña invalida o vencida ❌️"
-    end
+close.MouseButton1Click:Connect(function()
+	gui:Destroy()
 end)
 
-repeat task.wait() until unlocked
+-- Key Input (Left)
+local input = Instance.new("TextBox")
+input.Size = UDim2.new(0,250,0,38)
+input.Position = UDim2.new(0,20,0,75)
+input.PlaceholderText = "Ingresa tu key..."
+input.Text = ""
+input.Font = Enum.Font.GothamBold
+input.TextSize = 14
+input.TextColor3 = Color3.new(1,1,1)
+input.BackgroundColor3 = Color3.fromRGB(70,70,70)
+input.BorderSizePixel = 0
+input.ClearTextOnFocus = false
+input.Parent = main
+Instance.new("UICorner", input).CornerRadius = UDim.new(0,14)
 
--- =========================
--- 🔓 KEY SYSTEM (END)
--- =========================
+-- Check Button
+local check = Instance.new("TextButton")
+check.Size = UDim2.new(0,250,0,38)
+check.Position = UDim2.new(0,20,0,125)
+check.Text = "Check Key"
+check.Font = Enum.Font.GothamBold
+check.TextSize = 15
+check.TextColor3 = Color3.new(1,1,1)
+check.BackgroundColor3 = Color3.fromRGB(210,0,0)
+check.BorderSizePixel = 0
+check.Parent = main
+Instance.new("UICorner", check).CornerRadius = UDim.new(0,14)
+
+-- Status
+local status = Instance.new("TextLabel")
+status.Size = UDim2.new(0,250,0,32)
+status.Position = UDim2.new(0,20,0,170)
+status.BackgroundTransparency = 1
+status.Text = ""
+status.Font = Enum.Font.GothamBold
+status.TextSize = 13
+status.TextWrapped = true
+status.Parent = main
+
+-- Right Panel
+local right = Instance.new("Frame")
+right.Size = UDim2.new(0,170,1,-55)
+right.Position = UDim2.new(1,-185,0,55)
+right.BackgroundTransparency = 1
+right.Parent = main
+
+local info1 = Instance.new("TextLabel")
+info1.Size = UDim2.new(1,0,0,60)
+info1.BackgroundTransparency = 1
+info1.Text = "Duda o Error\ncontactarme Por MD!!"
+info1.Font = Enum.Font.GothamBold
+info1.TextSize = 14
+info1.TextColor3 = Color3.new(1,1,1)
+info1.TextWrapped = true
+info1.Parent = right
+
+local info2 = Instance.new("TextLabel")
+info2.Size = UDim2.new(1,0,0,30)
+info2.Position = UDim2.new(0,0,0,70)
+info2.BackgroundTransparency = 1
+info2.Text = "Tiktok: vz_loman._"
+info2.Font = Enum.Font.GothamBold
+info2.TextSize = 15
+info2.TextColor3 = Color3.fromRGB(210,0,0)
+info2.Parent = right
+
+-- 🔐 VALIDACIÓN DE KEY + USERID
+local function validarKey(key)
+	local ok, data = pcall(function()
+		return HttpService:GetAsync(KEYS_URL)
+	end)
+	if not ok then return false end
+
+	for line in data:gmatch("[^\r\n]+") do
+		local k, id = line:match("([^:]+):([^:]+)")
+		if k and id then
+			if k == key and tostring(player.UserId) == id then
+				return true
+			end
+		end
+	end
+	return false
+end
+
+check.MouseButton1Click:Connect(function()
+	if validarKey(input.Text) then
+		status.Text = "Correcta!! Iniciando script... ✅️"
+		status.TextColor3 = Color3.fromRGB(0,255,0)
+		wait(1)
+		gui:Destroy()
+
+		-- ⬇⬇⬇ AQUÍ CONTINÚA TU SCRIPT ⬇⬇⬇
+
+	else
+		status.Text = "Key incorrecta o vencida! ❌️"
+		status.TextColor3 = Color3.fromRGB(255,70,70)
+	end
+end)
 
 -- LocalScript placed in StarterGui or similar
 local Players = game:GetService("Players")
