@@ -148,8 +148,6 @@ check.MouseButton1Click:Connect(function()
 		wait(1)
 		gui:Destroy()
 
-		-- ⬇⬇⬇ AQUÍ CONTINÚA TU SCRIPT ⬇⬇⬇
-
 	else
 		status.Text = "Key incorrecta o vencida! ❌️"
 		status.TextColor3 = Color3.fromRGB(255,70,70)
