@@ -1,152 +1,160 @@
--- ===============================
--- SISTEMA DE KEY vzloman
--- ===============================
+-- =======================
+-- 🔐 KEY SYSTEM (GITHUB)
+-- =======================
 
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
-local PlayerGui = player:WaitForChild("PlayerGui")
 
 local KEYS_URL = "https://raw.githubusercontent.com/vzloman711/auto-farm/main/keys.txt"
 
-local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "KeySystemVzLoman"
-screenGui.ResetOnSpawn = false
-screenGui.Parent = PlayerGui
-
--- Frame principal
-local mainFrame = Instance.new("Frame")
-mainFrame.Size = UDim2.new(0, 420, 0, 220)
-mainFrame.Position = UDim2.new(0.5, -210, 0.5, -110)
-mainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-mainFrame.BorderSizePixel = 0
-mainFrame.Parent = screenGui
-Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0, 12)
-
--- Barra superior roja
-local topBar = Instance.new("Frame")
-topBar.Size = UDim2.new(1, 0, 0, 35)
-topBar.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-topBar.BorderSizePixel = 0
-topBar.Parent = mainFrame
-Instance.new("UICorner", topBar).CornerRadius = UDim.new(0, 12)
-
--- Título
-local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, -40, 1, 0)
-title.Position = UDim2.new(0, 10, 0, 0)
-title.BackgroundTransparency = 1
-title.Text = "Sistema de Key vzloman"
-title.TextColor3 = Color3.fromRGB(255,255,255)
-title.Font = Enum.Font.SourceSansBold
-title.TextSize = 18
-title.TextXAlignment = Enum.TextXAlignment.Left
-title.Parent = topBar
-
--- Botón cerrar
-local closeBtn = Instance.new("TextButton")
-closeBtn.Size = UDim2.new(0, 30, 0, 30)
-closeBtn.Position = UDim2.new(1, -35, 0, 2)
-closeBtn.Text = "X"
-closeBtn.Font = Enum.Font.SourceSansBold
-closeBtn.TextSize = 18
-closeBtn.TextColor3 = Color3.fromRGB(255,255,255)
-closeBtn.BackgroundColor3 = Color3.fromRGB(200,0,0)
-closeBtn.Parent = topBar
-Instance.new("UICorner", closeBtn).CornerRadius = UDim.new(0, 6)
-
-closeBtn.MouseButton1Click:Connect(function()
-    screenGui:Destroy()
-end)
-
--- Input Key
-local keyBox = Instance.new("TextBox")
-keyBox.Size = UDim2.new(0, 180, 0, 35)
-keyBox.Position = UDim2.new(0, 20, 0, 70)
-keyBox.PlaceholderText = "Ingresá tu Key"
-keyBox.Text = ""
-keyBox.Font = Enum.Font.SourceSansBold
-keyBox.TextSize = 16
-keyBox.TextColor3 = Color3.fromRGB(0,0,0)
-keyBox.BackgroundColor3 = Color3.fromRGB(160,160,160)
-keyBox.ClearTextOnFocus = false
-keyBox.Parent = mainFrame
-Instance.new("UICorner", keyBox).CornerRadius = UDim.new(0, 10)
-
--- Botón Check Key
-local checkBtn = Instance.new("TextButton")
-checkBtn.Size = UDim2.new(0, 180, 0, 38)
-checkBtn.Position = UDim2.new(0, 20, 0, 120)
-checkBtn.Text = "Check Key"
-checkBtn.Font = Enum.Font.SourceSansBold
-checkBtn.TextSize = 18
-checkBtn.TextColor3 = Color3.fromRGB(255,255,255)
-checkBtn.BackgroundColor3 = Color3.fromRGB(255,0,0)
-checkBtn.Parent = mainFrame
-Instance.new("UICorner", checkBtn).CornerRadius = UDim.new(0, 10)
-
--- Mensaje
-local msgLabel = Instance.new("TextLabel")
-msgLabel.Size = UDim2.new(0, 180, 0, 40)
-msgLabel.Position = UDim2.new(0, 20, 0, 165)
-msgLabel.BackgroundTransparency = 1
-msgLabel.Text = ""
-msgLabel.TextWrapped = true
-msgLabel.Font = Enum.Font.SourceSansBold
-msgLabel.TextSize = 14
-msgLabel.TextColor3 = Color3.fromRGB(255,255,255)
-msgLabel.Parent = mainFrame
-
--- Info derecha
-local infoText = Instance.new("TextLabel")
-infoText.Size = UDim2.new(0, 180, 0, 60)
-infoText.Position = UDim2.new(0, 220, 0, 80)
-infoText.BackgroundTransparency = 1
-infoText.TextWrapped = true
-infoText.Text = "Duda o Error contactarme Por MD!!"
-infoText.Font = Enum.Font.SourceSansBold
-infoText.TextSize = 16
-infoText.TextColor3 = Color3.fromRGB(255,255,255)
-infoText.Parent = mainFrame
-
-local tiktokText = Instance.new("TextLabel")
-tiktokText.Size = UDim2.new(0, 180, 0, 30)
-tiktokText.Position = UDim2.new(0, 220, 0, 145)
-tiktokText.BackgroundTransparency = 1
-tiktokText.Text = "Tiktok: vz_loman._"
-tiktokText.Font = Enum.Font.SourceSansBold
-tiktokText.TextSize = 16
-tiktokText.TextColor3 = Color3.fromRGB(255,0,0)
-tiktokText.Parent = mainFrame
-
--- ===============================
--- VALIDACIÓN DESDE GITHUB
--- ===============================
-
-local function validarKey(keyIngresada)
-    local success, response = pcall(function()
-        return game:HttpGet(KEYS_URL)
+local function getKeys()
+    local ok, data = pcall(function()
+        return game:HttpGet(KEYS_URL .. "?t=" .. tostring(os.time()))
     end)
-
-    if not success then
-        return false
+    if ok then
+        return data
     end
+    return ""
+end
 
-    for line in response:gmatch("[^\r\n]+") do
-        local key, userId = line:match("([^:]+):([^:]+)")
-        if key and userId then
-            if key == keyIngresada and tonumber(userId) == player.UserId then
+local function isKeyValid(inputKey)
+    local data = getKeys()
+    local userId = tostring(player.UserId)
+
+    for line in string.gmatch(data, "[^\r\n]+") do
+        local key, id = line:match("([^|]+)|([^|]+)")
+        if key and id then
+            if key == inputKey and id == userId then
                 return true
             end
         end
     end
-
     return false
 end
 
-local function iniciarScript()
-    screenGui:Destroy()
-	
-    -- ↓↓↓ PEGÁ TU SCRIPT ACÁ ↓↓↓
+-- =======================
+-- 🖼️ GUI KEY
+-- =======================
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = player:WaitForChild("PlayerGui")
+screenGui.ResetOnSpawn = false
+screenGui.DisplayOrder = 10000
+
+local keyFrame = Instance.new("Frame")
+keyFrame.Size = UDim2.new(0, 520, 0, 260)
+keyFrame.Position = UDim2.new(0.5, -260, 0.5, -130)
+keyFrame.BackgroundColor3 = Color3.fromRGB(0,0,0)
+keyFrame.Parent = screenGui
+Instance.new("UICorner", keyFrame).CornerRadius = UDim.new(0,12)
+
+local topBar = Instance.new("Frame")
+topBar.Size = UDim2.new(1,0,0,32)
+topBar.BackgroundColor3 = Color3.fromRGB(255,0,0)
+topBar.Parent = keyFrame
+Instance.new("UICorner", topBar).CornerRadius = UDim.new(0,12)
+
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1,-40,1,0)
+title.Position = UDim2.new(0,10,0,0)
+title.BackgroundTransparency = 1
+title.Text = "Auto Farm Anti RK ⚠️BETA⚠️"
+title.Font = Enum.Font.SourceSansBold
+title.TextSize = 18
+title.TextColor3 = Color3.new(1,1,1)
+title.Parent = topBar
+
+local close = Instance.new("TextButton")
+close.Size = UDim2.new(0,30,0,30)
+close.Position = UDim2.new(1,-32,0,1)
+close.Text = "X"
+close.Font = Enum.Font.SourceSansBold
+close.TextSize = 18
+close.TextColor3 = Color3.new(1,1,1)
+close.BackgroundColor3 = Color3.fromRGB(200,0,0)
+close.Parent = topBar
+Instance.new("UICorner", close).CornerRadius = UDim.new(0,6)
+close.MouseButton1Click:Connect(function()
+	screenGui:Destroy()
+end)
+
+local betaLabel = Instance.new("TextLabel")
+betaLabel.Size = UDim2.new(0,260,0,30)
+betaLabel.Position = UDim2.new(0,20,0,50)
+betaLabel.BackgroundTransparency = 1
+betaLabel.Text = "Recorda que es beta este script !!!"
+betaLabel.Font = Enum.Font.SourceSansBold
+betaLabel.TextSize = 16
+betaLabel.TextColor3 = Color3.fromRGB(255,80,80)
+betaLabel.Parent = keyFrame
+
+local keyBox = Instance.new("TextBox")
+keyBox.Size = UDim2.new(0,260,0,36)
+keyBox.Position = UDim2.new(0,20,0,85)
+keyBox.PlaceholderText = "Ingresá tu key"
+keyBox.Text = ""
+keyBox.Font = Enum.Font.SourceSansBold
+keyBox.TextSize = 18
+keyBox.TextColor3 = Color3.new(1,1,1)
+keyBox.BackgroundColor3 = Color3.fromRGB(50,50,50)
+keyBox.Parent = keyFrame
+Instance.new("UICorner", keyBox).CornerRadius = UDim.new(0,8)
+
+local checkBtn = Instance.new("TextButton")
+checkBtn.Size = UDim2.new(0,260,0,40)
+checkBtn.Position = UDim2.new(0,20,0,135)
+checkBtn.Text = "Check Key"
+checkBtn.Font = Enum.Font.SourceSansBold
+checkBtn.TextSize = 18
+checkBtn.TextColor3 = Color3.new(1,1,1)
+checkBtn.BackgroundColor3 = Color3.fromRGB(255,0,0)
+checkBtn.Parent = keyFrame
+Instance.new("UICorner", checkBtn).CornerRadius = UDim.new(0,8)
+
+local msg = Instance.new("TextLabel")
+msg.Size = UDim2.new(0,260,0,30)
+msg.Position = UDim2.new(0,20,0,185)
+msg.BackgroundTransparency = 1
+msg.Text = ""
+msg.Font = Enum.Font.SourceSansBold
+msg.TextSize = 16
+msg.TextColor3 = Color3.new(1,1,1)
+msg.Parent = keyFrame
+
+local contactFrame = Instance.new("Frame")
+contactFrame.Size = UDim2.new(0,180,0,200)
+contactFrame.Position = UDim2.new(0,320,0,45)
+contactFrame.BackgroundColor3 = Color3.fromRGB(15,15,15)
+contactFrame.Parent = keyFrame
+Instance.new("UICorner", contactFrame).CornerRadius = UDim.new(0,10)
+
+local contactText = Instance.new("TextLabel")
+contactText.Size = UDim2.new(1,-10,0,80)
+contactText.Position = UDim2.new(0,5,0,20)
+contactText.BackgroundTransparency = 1
+contactText.TextWrapped = true
+contactText.Text = "Si tenes algún error\ncontactame por TikTok!"
+contactText.Font = Enum.Font.SourceSansBold
+contactText.TextSize = 16
+contactText.TextColor3 = Color3.new(1,1,1)
+contactText.Parent = contactFrame
+
+local userText = Instance.new("TextLabel")
+userText.Size = UDim2.new(1,-10,0,40)
+userText.Position = UDim2.new(0,5,0,110)
+userText.BackgroundTransparency = 1
+userText.Text = "vz_loman._"
+userText.Font = Enum.Font.SourceSansBold
+userText.TextSize = 18
+userText.TextColor3 = Color3.fromRGB(255,0,0)
+userText.Parent = contactFrame
+
+-- =======================
+-- 🚀 SCRIPT PRINCIPAL
+-- =======================
+
+local function startMainScript()
+
 -- LocalScript placed in StarterGui or similar
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
@@ -172,32 +180,6 @@ screenGui.Parent = player:WaitForChild("PlayerGui")
 screenGui.ResetOnSpawn = false
 screenGui.IgnoreGuiInset = true
 screenGui.DisplayOrder = 9999
-
--- Beta Warning Popup (5 seconds, positioned lower)
-local warningFrame = Instance.new("Frame")
-warningFrame.Size = UDim2.new(0, 400, 0, 150)
-warningFrame.Position = UDim2.new(0.5, -200, 0.65, -75)  -- Más abajo
-warningFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-warningFrame.BorderSizePixel = 0
-warningFrame.Parent = screenGui
-local warningCorner = Instance.new("UICorner")
-warningCorner.CornerRadius = UDim.new(0, 20)
-warningCorner.Parent = warningFrame
-
-local warningText = Instance.new("TextLabel")
-warningText.Size = UDim2.new(1, -20, 1, -20)
-warningText.Position = UDim2.new(0, 10, 0, 10)
-warningText.BackgroundTransparency = 1
-warningText.Text = "el script es BETA asi que hazme saber errores"
-warningText.TextColor3 = Color3.fromRGB(255, 255, 255)
-warningText.Font = Enum.Font.SourceSansBold
-warningText.TextSize = 24
-warningText.TextWrapped = true
-warningText.Parent = warningFrame
-
-task.delay(5, function()
-    warningFrame:Destroy()
-end)
 
 -- Main Frame (Black background)
 local mainFrame = Instance.new("Frame")
@@ -669,12 +651,26 @@ Players.PlayerRemoving:Connect(function(plr)
     end
 end)
 
+end
+
+-- =======================
+-- ✅ CHECK KEY
+-- =======================
+
 checkBtn.MouseButton1Click:Connect(function()
-    if validarKey(keyBox.Text) then
-        msgLabel.Text = "Correcta!! Iniciando script... ✅️"
-        task.wait(1)
-        iniciarScript()
-    else
-        msgLabel.Text = "Key incorrecta o vencida! ❌️"
-    end
+	msg.Text = "Verificando key..."
+	msg.TextColor3 = Color3.fromRGB(255,255,0)
+
+	if isKeyValid(keyBox.Text) then
+		msg.Text = "Correcta, iniciando script... ✅️"
+		msg.TextColor3 = Color3.fromRGB(0,255,0)
+
+		task.delay(2, function()
+			keyFrame:Destroy()
+			startMainScript()
+		end)
+	else
+		msg.Text = "Contraseña invalida o vencida ❌️"
+		msg.TextColor3 = Color3.fromRGB(255,0,0)
+	end
 end)
